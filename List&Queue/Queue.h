@@ -18,6 +18,7 @@ typedef struct Node{
     struct Node* prev;
 }Node;
 
+/*The initialization of the Queue.*/
 Queue* queue_init(){
     Queue* q = malloc(sizeof(Queue));
     q->nodes_count = 0;
