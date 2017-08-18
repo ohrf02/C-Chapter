@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <stdio.h>
 
+/*The Queue and the Node Structs.*/
 typedef struct Queue{
     struct Node* head;
     struct Node* last;
@@ -26,6 +27,7 @@ Queue* queue_init(){
     return q;
 }
 
+/*The initialization of the node.*/
 Node* node_init(void* value){
     Node* node = malloc(sizeof(Node));
     node->next = NULL;
@@ -35,6 +37,7 @@ Node* node_init(void* value){
     return node;
 }
 
+/*The destructor of the queue.*/
 void remove_queue(Queue* q) {
     int size = q->nodes_count;
     int i = 0;
@@ -46,14 +49,17 @@ void remove_queue(Queue* q) {
     free(q);
 }
 
+/*Returns the first element of the queue without pop it from the queue.*/
 void* peek(Queue* q){
     return q->head->value;
 }
 
+/*Returns the queue's length.*/
 int get_length(Queue* q){
     return q->nodes_count;
 }
 
+/*Adds another element to the queue.*/
 void enqueue(Queue* q, Node* node){
 
     if(q->nodes_count > 0){
@@ -68,6 +74,7 @@ void enqueue(Queue* q, Node* node){
 
 }
 
+/*Pops and returns the first element in the queue.*/
 void* dequeue(Queue* q){
     /*If the queue has values =>*/
     if(q->nodes_count > 0){
@@ -90,6 +97,7 @@ void* dequeue(Queue* q){
     return (void*)0;
 }
 
+/*The main function of this file (does not necessary because it is a module...)*/
 int main(){
     int value = 44, value1 = 55, value2 = 66;
     Node* n1 = node_init(&value);
