@@ -7,14 +7,53 @@
 #define Cannot_open_dict (-3)
 
 /*Reads and returns a word from a given file.*/
-char* get_word_from_file(FILE *fp){
+char* get_word_from_file(FILE *fp, FILE * fpt){
 
     /*The buffer to store the word.*/
     char word[255];
+
     int ch, i=0;
 
     /*Go over the chars in the file till a non spacing word is found (or the end of the file).*/
-    while(EOF!=(ch=fgetc(fp)) && !(isalpha(ch) || !(isspace(ch))))
+    while(EOF!=(ch=fgetc(fp)) && !(ch >= 'a' && ch <= 'z')) {
+        if(ch == EOF){
+            return NULL;
+        }
+        if(!isalpha(ch)) {
+            fprintf(fpt, "%c", ch);
+
+        }
+    }
+
+    if(ch == EOF){
+        return NULL;
+    }
+    do{
+        if(isalpha(ch)) {
+            /*Builds the word's string*/
+            word[i++] = (char) ch;
+        }
+    }while(EOF!=(ch=fgetc(fp)) && (ch >= 'a' && ch <= 'z'));
+
+    if(ch != EOF && !isalpha(ch)){
+        fseek(fp, -1, SEEK_CUR);
+    }
+
+    /*Ends the string with the '\0' char, and returns the string.*/
+    word[i]='\0';
+
+    return strdup(word);
+}
+
+char* get_word_from_file_without_print(FILE *fp){
+
+    /*The buffer to store the word.*/
+    char word[255];
+
+    int ch, i=0;
+
+    /*Go over the chars in the file till a non spacing word is found (or the end of the file).*/
+    while(EOF!=(ch=fgetc(fp)) && !(ch >= 'a' && ch <= 'z'))
         continue;
 
     if(ch == EOF)
@@ -65,30 +104,32 @@ int main(int argc, char* argv[]){
     int bool = 0;
 
     /*Goes over the words in the given file.*/
-    while (NULL != (original_word = get_word_from_file(fpr))){
-
+    while (NULL != (original_word = get_word_from_file(fpr, fpt))){
+        printf("original word: %s \n", original_word);
         /*Goes over the words in the dictionary file.*/
-        while ((NULL != (word1 = get_word_from_file(fpd))) && (NULL != (word2 = get_word_from_file(fpd)))) {
+        while ((NULL != (word1 = get_word_from_file_without_print(fpd))) && (NULL != (word2 = get_word_from_file_without_print(fpd))) && bool == 0) {
+            printf("%s %s \n", word1, word2);
             /*If the word is the first loaded word => write the second word(and the opposite as well.)*/
             if (strcmp(word1, original_word) == 0) {
-                fprintf(fpt, "%s ", word2);
+                fprintf(fpt, "%s", word2);
                 bool = 1;
-                break;
-            }
+            }else
+
             if (strcmp(word2, original_word) == 0) {
-                fprintf(fpt, "%s ", word1);
+                fprintf(fpt, "%s", word1);
                 bool = 1;
-                break;
             }
         }
+
         /*Sets the file pointer to the start of the file.*/
         rewind(fpd);
 
         /*If the word was not replaced => write the original word*/
         if(bool == 0){
-            fprintf(fpt, "%s ", original_word);
+            fprintf(fpt, "%s", original_word);
             bool = 0;
         }
+        bool = 0;
     }
 
     int c;
